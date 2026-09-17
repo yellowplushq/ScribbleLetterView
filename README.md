@@ -11,31 +11,58 @@ It's a Swift port of [kumailnanji/letters](https://github.com/kumailnanji/letter
 
 ## Installation
 
-Add the package with Swift Package Manager:
+In Xcode, choose **File > Add Package Dependencies**, enter `https://github.com/yellowplushq/ScribbleLetterView`, and add `ScribbleLetter` to your app target.
+
+In a `Package.swift`, add the package and then the `ScribbleLetter` product to your target:
 
 ```swift
 .package(url: "https://github.com/yellowplushq/ScribbleLetterView", from: "0.1.0")
 ```
 
-Then add the `ScribbleLetter` product to your target.
-
 ## UIKit
+
+Add `ScribbleLetterView` like any other view, constrain its size, and call `play()` once it's on screen:
 
 ```swift
 import ScribbleLetter
+import UIKit
 
-let scribble = ScribbleLetterView(text: "hello")
+final class WelcomeViewController: UIViewController {
+    private let scribble = ScribbleLetterView(text: "hello")
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        scribble.progress = 0 // Hidden until it plays
+        scribble.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(scribble)
+        NSLayoutConstraint.activate([
+            scribble.leadingAnchor.constraint(equalTo: view.layoutMarginsGuide.leadingAnchor),
+            scribble.trailingAnchor.constraint(equalTo: view.layoutMarginsGuide.trailingAnchor),
+            scribble.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            scribble.heightAnchor.constraint(equalToConstant: 80),
+        ])
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        scribble.play()
+    }
+}
+```
+
+Customize it before playing:
+
+```swift
 scribble.color = .systemIndigo
 scribble.timing = .tween(duration: 2.5, curve: .easeInOut) // or .spring(.bouncy)
 scribble.loops = true
 scribble.loopPause = 0.5
 scribble.onComplete = { print("drawn") }
-scribble.play()
 
 scribble.progress = 0.4 // Jumps to 40% and stops playback
 ```
 
-Control playback with `play()`, `pause()`, `replay()` and `reset()`. Read the current state from `isPlaying`, and observe it with `onPlayingChange` and `onProgressChange`.
+Control playback with `play()`, `pause()`, `replay()` and `reset()`. Read the current state from `isPlaying`, and observe it with `onPlayingChange` and `onProgressChange`. Playback pauses while the view is off screen and picks up where it left off.
 
 The view scales the text to fit its bounds and centers it. `sizeThatFits(_:)` and `intrinsicContentSize` return a size that matches the text's aspect ratio.
 
