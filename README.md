@@ -14,7 +14,7 @@ It's a Swift port of [kumailnanji/letters](https://github.com/kumailnanji/letter
 Add the package with Swift Package Manager:
 
 ```swift
-.package(url: "https://github.com/yellowplushq/ScribbleLetterView", from: "1.0.0")
+.package(url: "https://github.com/yellowplushq/ScribbleLetterView", from: "0.1.0")
 ```
 
 Then add the `ScribbleLetter` product to your target.
