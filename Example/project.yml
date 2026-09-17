@@ -1,0 +1,30 @@
+# Generates ScribbleApp.xcodeproj: `xcodegen` in this directory.
+name: ScribbleApp
+options:
+  deploymentTarget:
+    iOS: "15.0"
+packages:
+  ScribbleLetterView:
+    path: ..
+targets:
+  ScribbleApp:
+    type: application
+    platform: iOS
+    sources: [ScribbleApp]
+    dependencies:
+      - package: ScribbleLetterView
+        product: ScribbleLetter
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: wiki.qaq.ScribbleApp
+        DEVELOPMENT_TEAM: 964G86XT2P
+        CODE_SIGN_STYLE: Automatic
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "6.0"
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Scribble
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UIApplicationSceneManifest_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
