@@ -4,7 +4,7 @@
 //
 //  Swift port of kumailnanji/letters: Hershey script fonts supply kerning and
 //  stroke order, hand-tuned Bézier glyphs replace a–z. Glyph data lives in
-//  Resources/glyphs.json, generated from the JS package's data files.
+//  the GlyphData extensions, generated from the JS package's data files.
 //
 
 import CoreGraphics
@@ -150,8 +150,7 @@ struct ScribbleLayout {
 
     /// `tension` below 1 is treated as 1: control points divide by it.
     init(text: String, variant: ScribbleVariant, tension: Double) {
-        let data = GlyphData.shared
-        let font = variant == .simple ? data.simple : data.complex
+        let font = variant == .simple ? GlyphData.simple : GlyphData.complex
         let tension = tension >= 1 ? tension : 1
 
         struct Stroke {
@@ -174,7 +173,7 @@ struct ScribbleLayout {
             guard let glyph = font[char] else { continue }
             let offsetX = cursorX - glyph.left
             let strokes = glyph.strokes.map { raw in
-                let points = raw.map { CGPoint(x: $0[0] + offsetX, y: $0[1]) }
+                let points = raw.map { CGPoint(x: $0.x + offsetX, y: $0.y) }
                 let length = polylineLength(points)
                 for point in points {
                     minY = min(minY, point.y)
@@ -240,7 +239,7 @@ struct ScribbleLayout {
             let letter = letters[position]
 
             let parts: [(path: CGPath, dot: Dot?, weight: Double)]
-            if let custom = data.custom[letter.char], !custom.isEmpty {
+            if let custom = GlyphData.custom[letter.char], !custom.isEmpty {
                 let shift = CGAffineTransform(translationX: letter.originX, y: 0)
                 parts = custom.map { path in
                     let parsed = svgPath(path.d, transform: shift)
@@ -265,38 +264,6 @@ struct ScribbleLayout {
 
         bounds = CGRect(x: 0, y: minY, width: cursorX, height: maxY - minY)
     }
-}
-
-// MARK: - Glyph data
-
-struct GlyphData: Decodable, Sendable {
-    struct Glyph: Decodable, Sendable {
-        let left: Double
-        let right: Double
-        let strokes: [[[Double]]]
-    }
-
-    struct CustomPath: Decodable, Sendable {
-        struct Dot: Decodable, Sendable {
-            let cx: Double
-            let cy: Double
-            let r: Double
-        }
-
-        let d: String
-        let dot: Dot?
-        /// Overrides the path-length timeline weight, e.g. for the t crossbar.
-        let drawWeight: Double?
-    }
-
-    let simple: [String: Glyph]
-    let complex: [String: Glyph]
-    let custom: [String: [CustomPath]]
-
-    static let shared: GlyphData = {
-        let url = Bundle.module.url(forResource: "glyphs", withExtension: "json")!
-        return try! JSONDecoder().decode(GlyphData.self, from: Data(contentsOf: url))
-    }()
 }
 
 // MARK: - Geometry
@@ -355,7 +322,7 @@ func svgPath(_ d: String, transform: CGAffineTransform = .identity) -> (path: CG
     var coordinates: [CGPoint] = []
     var command = "M"
     var pending: [Double] = []
-    for token in d.split(whereSeparator: { $0 == " " || $0 == "," }) {
+    for token in d.split(whereSeparator: { $0.isWhitespace || $0 == "," }) {
         guard let number = Double(token) else {
             command = String(token)
             pending = []

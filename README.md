@@ -101,7 +101,7 @@ To regenerate the Xcode project, run `xcodegen` in `Example`.
 
 ## Glyph Data
 
-`Sources/ScribbleLetter/Resources/glyphs.json` is generated from `src/hershey-data.ts` and `src/custom-letters.ts` in the [upstream repository](https://github.com/kumailnanji/letters). To change a glyph, edit its `d` string there.
+The glyphs are compiled into the package as Swift source in `Sources/ScribbleLetter/Glyphs/`, generated from `src/hershey-data.ts` and `src/custom-letters.ts` in the [upstream repository](https://github.com/kumailnanji/letters). `GlyphData+Simple.swift` and `GlyphData+Complex.swift` hold the Hershey strokes. `GlyphData+Custom.swift` holds the hand-tuned a–z paths, one SVG command per line. To change a glyph, edit its path there.
 
 `swift test` checks the layout against values from the JavaScript implementation.
 

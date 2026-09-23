@@ -13,10 +13,7 @@ let package = Package(
         .library(name: "ScribbleLetter", targets: ["ScribbleLetter"]),
     ],
     targets: [
-        .target(
-            name: "ScribbleLetter",
-            resources: [.process("Resources")]
-        ),
+        .target(name: "ScribbleLetter"),
         .testTarget(
             name: "ScribbleLetterTests",
             dependencies: ["ScribbleLetter"]
